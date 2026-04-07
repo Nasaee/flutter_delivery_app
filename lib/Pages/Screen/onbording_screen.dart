@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_delivery_app/Core/Utils/consts.dart';
+import 'package:flutter_delivery_app/Pages/Screen/app_main_screen.dart';
 import 'package:flutter_delivery_app/models/on_bording_model.dart';
 
 class OnbordingScreen extends StatefulWidget {
@@ -139,7 +140,14 @@ class _OnbordingScreenState extends State<OnbordingScreen> {
                     ),
                     SizedBox(height: 30),
                     MaterialButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AppMainScreen(),
+                          ),
+                        );
+                      },
                       color: Colors.red,
                       height: 65,
                       minWidth: 250,

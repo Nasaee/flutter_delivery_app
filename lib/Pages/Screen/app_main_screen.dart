@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_delivery_app/Core/Utils/consts.dart';
+import 'package:flutter_delivery_app/Pages/Screen/food_app_home_screen.dart';
+import 'package:flutter_delivery_app/Pages/Screen/profile_screen.dart';
 import 'package:iconsax/iconsax.dart';
 
 class AppMainScreen extends StatefulWidget {
@@ -12,10 +14,17 @@ class AppMainScreen extends StatefulWidget {
 
 class _AppMainScreenState extends State<AppMainScreen> {
   int currentIndex = 0;
+  final List<Widget> _pages = [
+    FoodAppHomeScreen(),
+    Scaffold(),
+    ProfileScreen(),
+    Scaffold(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      body: _pages[currentIndex],
       bottomNavigationBar: Container(
         height: 90,
         decoration: BoxDecoration(color: Colors.white),
@@ -37,6 +46,7 @@ class _AppMainScreenState extends State<AppMainScreen> {
                   top: 16,
                   child: CircleAvatar(
                     backgroundColor: red,
+                    radius: 10,
                     child: Text(
                       '0',
                       style: TextStyle(fontSize: 12, color: Colors.white),
@@ -61,7 +71,6 @@ class _AppMainScreenState extends State<AppMainScreen> {
           ],
         ),
       ),
-      body: Center(child: Text('AppMainScreen')),
     );
   }
 
@@ -69,9 +78,12 @@ class _AppMainScreenState extends State<AppMainScreen> {
   Widget _buildNavItems(IconData icon, String label, int index) {
     return InkWell(
       onTap: () {
-        setState(() {});
+        setState(() {
+          currentIndex = index;
+        });
       },
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             icon,
