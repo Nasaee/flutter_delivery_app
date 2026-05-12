@@ -3,16 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_delivery_app/Core/Utils/consts.dart';
 import 'package:flutter_delivery_app/Pages/Screen/food_app_home_screen.dart';
 import 'package:flutter_delivery_app/Pages/Screen/profile_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 
-class AppMainScreen extends StatefulWidget {
+class AppMainScreen extends ConsumerStatefulWidget {
   const AppMainScreen({super.key});
 
   @override
-  State<AppMainScreen> createState() => _AppMainScreenState();
+  ConsumerState<AppMainScreen> createState() => _AppMainScreenState();
 }
 
-class _AppMainScreenState extends State<AppMainScreen> {
+class _AppMainScreenState extends ConsumerState<AppMainScreen> {
   int currentIndex = 0;
   final List<Widget> _pages = [
     FoodAppHomeScreen(),
@@ -20,7 +21,6 @@ class _AppMainScreenState extends State<AppMainScreen> {
     ProfileScreen(),
     Scaffold(),
   ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,45 +28,51 @@ class _AppMainScreenState extends State<AppMainScreen> {
       bottomNavigationBar: Container(
         height: 90,
         decoration: BoxDecoration(color: Colors.white),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        child: Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.center,
           children: [
-            _buildNavItems(Iconsax.home_15, "A", 0),
-            SizedBox(width: 10),
-            _buildNavItems(Iconsax.heart, "B", 1),
-            SizedBox(width: 90),
-            _buildNavItems(Iconsax.user, "C", 2),
-            SizedBox(width: 10),
-            Stack(
-              clipBehavior: Clip.none,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildNavItems(Iconsax.shopping_cart, "D", 3),
-                Positioned(
-                  right: -7,
-                  top: 16,
-                  child: CircleAvatar(
-                    backgroundColor: red,
-                    radius: 10,
-                    child: Text(
-                      '0',
-                      style: TextStyle(fontSize: 12, color: Colors.white),
+                _buildNavItems(Iconsax.home_15, "A", 0),
+                SizedBox(width: 10),
+                _buildNavItems(Iconsax.heart, "B", 1),
+                SizedBox(width: 100),
+                _buildNavItems(Iconsax.user, "C", 2),
+                SizedBox(width: 10),
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    _buildNavItems(Iconsax.shopping_cart, "D", 3),
+                    Positioned(
+                      right: -7,
+                      top: 16,
+                      // we well make this number of cart items dynamic later
+                      child: CircleAvatar(
+                        backgroundColor: red,
+                        radius: 10,
+                        child: Text(
+                          '0',
+                          style: TextStyle(fontSize: 12, color: Colors.white),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                Positioned(
-                  right: 155,
-                  top: -25,
-                  child: CircleAvatar(
-                    backgroundColor: red,
-                    radius: 35,
-                    child: Icon(
-                      CupertinoIcons.search,
-                      size: 35,
-                      color: Colors.white,
-                    ),
-                  ),
+                  ],
                 ),
               ],
+            ),
+            Positioned(
+              top: -25,
+              child: CircleAvatar(
+                backgroundColor: red,
+                radius: 35,
+                child: Icon(
+                  CupertinoIcons.search,
+                  size: 35,
+                  color: Colors.white,
+                ),
+              ),
             ),
           ],
         ),
@@ -75,7 +81,7 @@ class _AppMainScreenState extends State<AppMainScreen> {
   }
 
   // helper method to build each navigation items
-  Widget _buildNavItems(IconData icon, String label, int index) {
+  Widget _buildNavItems(IconData icon, String lable, int index) {
     return InkWell(
       onTap: () {
         setState(() {

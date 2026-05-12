@@ -1,44 +1,44 @@
 # 🎨 บันทึกความเข้าใจ: การวาด Path และทฤษฎีเรขาคณิตในหน้า Onboarding
 
-ใน Flutter จุดกำเนิดพิกัด `(x:0, y:0)` จะเริ่มต้นอยู่บน **มุมซ้ายบนสุดของจอเสมอ** 
+ใน Flutter จุดกำเนิดพิกัด `(x:0, y:0)` จะเริ่มต้นอยู่บน **มุมซ้ายบนสุดของจอเสมอ**
 
 ---
 
-## 1. 📝 อธิบายสเตปเบื้องต้น `CustomClip` 
+## 1. 📝 อธิบายสเตปเบื้องต้น `CustomClip`
 
 ```dart
 class CustomClip extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     Path path = Path(); // 1. เริ่มต้นจรดปากกาที่จุด มุมซ้ายบนสุด (x:0, y:0)
-    
+
     // 2. ดิ่งลงมาตามขอบซ้ายมือ 30 พิกเซล
-    path.lineTo(0, 30); 
-    
+    path.lineTo(0, 30);
+
     // 3. ดิ่งลงมาจนสุดขอบล่างของกล่อง (ซ้ายล่างสุด)
-    path.lineTo(0, size.height); 
-    
+    path.lineTo(0, size.height);
+
     // 4. ลากเส้นแนวนอนไปสุดขอบขวามือ (ขวาล่างสุด)
-    path.lineTo(size.width, size.height); 
-    
+    path.lineTo(size.width, size.height);
+
     // 5. ลากขึ้นไปด้านขวาบน แต่ก่อนถึงขอบบน 30px ให้เบรกปากกา (จรดที่นี่)
-    path.lineTo(size.width, 30); 
-    
+    path.lineTo(size.width, 30);
+
     // 🔥 6. วาดเส้น Bezier Curve โค้งขึ้นดั่งหลังคาสะพาน
     path.quadraticBezierTo(
-      size.width / 2, // แกน X จุดดึง: กึ่งกลางของหน้ากว้างหน้าจอ! 
+      size.width / 2, // แกน X จุดดึง: กึ่งกลางของหน้ากว้างหน้าจอ!
       -30, // แกน Y จุดดึง: ค่าติดลบคือการทะลุขอบบนขึ้นไป 30px
       0, // แกน X จุดจบ: กลับมาที่เส้นขอบซ้ายสุด
       30, // แกน Y จุดจบ: ลากมาชนกับจุดแรกที่ความสูง 30px
     );
-    
+
     // 7. พับเส้นให้บรรจบเพื่อระบายสี/หรือตัดพื้นที่
-    path.close(); 
+    path.close();
     return path;
   }
 
   @override
-  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false; 
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
 }
 ```
 
@@ -54,7 +54,7 @@ class CustomClip extends CustomClipper<Path> {
 ### ภาพแสดงการคำนวณความสูงรวม "60 พิกเซล"
 
 ```text
-           [ size.width ลากยาวสุดขอบหน้าจอมือถือจริงๆ ! ] 
+           [ size.width ลากยาวสุดขอบหน้าจอมือถือจริงๆ ! ]
        <--------------------------------------------------->
 
  y=-30      ยอดดึง (Control) 📌  .  .  .  .  .  .  .  .  .  . | . . (ขึ้นไปสูง 30px จากขอบจอ)
@@ -67,5 +67,34 @@ class CustomClip extends CustomClipper<Path> {
 ```
 
 **สรุป**:
+
 - ความกว้าง (X) = ตลอดยาวสุดหน้าจอ (`size.width`)
 - ความสูง (Y) = ภูเขาเรานูนปูดขึ้นหนาตั้ง `60px` ตรงจุดศูนย์กลางพอดีเป๊ะครับ!
+
+  สิ่งที่ script ทำอัตโนมัติ:
+  - iOS — boot simulator ด้วย UDID, เปิด Simulator.app, รอให้พร้อม, แล้ว run app  
+    ./scripts/run_ios.sh "iPhone 16 Plus"
+
+  ./scripts/run_ios.sh "iPhone 16 Plus"
+
+  # Android (ใช้ default: Pixel_9_Pro)
+
+  ./scripts/run_android.sh
+
+  # Android เลือก emulator เอง
+
+  ./scripts/run_android.sh Medium_Phone_API_36
+
+---
+
+## 3. 📦 Expanded และข้อควรระวังเรื่องการทำ Responsive Layout
+
+**`Expanded` ทำหน้าที่อะไร?**
+`Expanded` คือวิดเจ็ตที่ใช้บังคับให้วิดเจ็ตลูก (เช่น `Column` หรือ `Row`) ขยายตัวออกไปจนเต็มพื้นที่ว่างทั้งหมดที่เหลืออยู่ตามแกนหลักของวิดเจ็ตแม่ 
+- หากไม่ใช้ `Expanded` ตัวลูกจะใช้พื้นที่เท่าที่เนื้อหาต้องการ ซึ่งอาจทำให้เกิด Over-flow ล้นขอบจอได้
+- เหมาะมากสำหรับการแบ่งพื้นที่ เช่น การทำการ์ดที่มีข้อความฝั่งซ้าย (ยืดหยุ่นด้วย Expanded) และรูปภาพฝั่งขวา (ขนาดคงที่)
+
+**ข้อควรระวังในการออกแบบ (Responsive Design)**
+1. **อย่าใส่ Row ซ้อนโดยไม่จำเป็น**: ถ้าภายใน `Row` มีวิดเจ็ตเพียงตัวเดียว การใส่ `Row` ซ้อนไว้จะทำให้โค้ดซับซ้อนเกินจำเป็น
+2. **หลีกเลี่ยงการใช้ Fixed Height**: การกำหนดความสูงตายตัว (เช่น `height: 160`) ทำให้ไม่รองรับกรณีที่เนื้อหายาวขึ้นหรือผู้ใช้ขยายขนาดฟอนต์ (Accessibility) ซึ่งจะทำให้ UI พัง
+3. **ทางแก้คือการใช้ Min-Height**: หากต้องการบังคับให้การ์ดมีสัดส่วนที่ดูดี ให้เปลี่ยนไปใช้ `constraints: BoxConstraints(minHeight: 160)` แทน เพื่อให้ UI สามารถยืดขยายตามเนื้อหาได้อย่างปลอดภัย
